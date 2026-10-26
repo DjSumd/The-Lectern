@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Lectern</title>
+<meta name="description" content="Daily practice for the voice, the words and the room.">
+<meta name="theme-color" content="#16151a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lectern">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#16151a; --bg2:#1d1b22; --panel:#232028; --panel2:#2a2730; --line:#34303b;
+  --ink:#ece6da; --ink2:#b9b2a6; --ink3:#8a847a;
+  --ox:#6e1f2b; --ox2:#8a2a38; --oxsoft:rgba(138,42,56,.18);
+  --brass:#c39a55; --brass2:#dcb56e; --brasssoft:rgba(195,154,85,.14);
+  --strong:#6f9a6a; --mixed:#c39a55; --weak:#a8484f;
+  --radius:16px; --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+body{min-height:100vh;padding-bottom:calc(84px + var(--safe-b))}
+h1,h2,h3,.serif{font-family:var(--serif);font-weight:500;letter-spacing:.01em;margin:0}
+h1{font-size:2.2rem;line-height:1.05}
+h2{font-size:1.55rem;line-height:1.15}
+h3{font-size:1.2rem;line-height:1.2}
+p{margin:0 0 .8em}
+a{color:var(--brass2)}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+header.top{padding:calc(14px + env(safe-area-inset-top,0px)) 18px 6px;display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+header.top .brand{font-family:var(--serif);font-size:1.35rem;letter-spacing:.06em;text-transform:uppercase;color:var(--brass)}
+header.top .brand small{display:block;font-family:var(--sans);font-size:.68rem;letter-spacing:.14em;color:var(--ink3);text-transform:uppercase;margin-top:-2px}
+header.top .date{font-size:.78rem;color:var(--ink3);letter-spacing:.04em}
+main{padding:8px 16px 16px;max-width:720px;margin:0 auto}
+.eyebrow{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--brass);font-weight:600;margin-bottom:6px}
+.sub{color:var(--ink2);font-size:.92rem}
+.note{color:var(--ink3);font-size:.85rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:12px 0;position:relative}
+.card.ox{border-color:rgba(138,42,56,.45);background:linear-gradient(180deg,rgba(110,31,43,.16),var(--panel) 60%)}
+.card.tap{cursor:pointer}
+.card.tap:active{background:var(--panel2)}
+.card .k{position:absolute;top:12px;right:14px;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3)}
+.card .done{position:absolute;top:10px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--brass);color:#1a1510;font-size:.8rem;display:flex;align-items:center;justify-content:center;font-weight:700}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border-radius:12px;background:var(--panel2);border:1px solid var(--line);color:var(--ink);font-size:.9rem;font-weight:500;min-height:42px}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--ox);border-color:var(--ox2);color:#f6efe6}
+.btn.brass{background:var(--brasssoft);border-color:rgba(195,154,85,.5);color:var(--brass2)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px;min-height:32px;font-size:.8rem}
+.btn.on{background:var(--brass);color:#1a1510;border-color:var(--brass)}
+.btn svg{width:16px;height:16px;flex:none}
+.pills{display:flex;gap:8px;overflow-x:auto;padding:4px 0 10px;scrollbar-width:none;margin:0 -16px;padding-left:16px;padding-right:16px}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-size:.82rem;color:var(--ink2);white-space:nowrap}
+.pill.on{background:var(--brass);color:#1a1510;border-color:var(--brass);font-weight:600}
+.pill .n{opacity:.65;font-size:.72rem;margin-left:4px}
+.seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:3px;margin:10px 0 14px}
+.seg button{flex:1;padding:9px 6px;border-radius:9px;font-size:.82rem;color:var(--ink2);font-weight:500}
+.seg button.on{background:var(--panel2);color:var(--ink)}
+.search{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:11px 14px;color:var(--ink);font:inherit;font-size:.95rem;margin:4px 0 8px}
+.search:focus{outline:none;border-color:var(--brass)}
+textarea.search{min-height:120px;resize:vertical;line-height:1.5}
+.say{font-family:var(--serif);font-size:1.5rem;line-height:1.3;color:var(--ink);margin:6px 0 10px}
+.say.big{font-size:1.75rem}
+.say em.land{font-style:normal;color:var(--brass2);font-weight:600;border-bottom:2px solid var(--brass)}
+.say .br{color:var(--brass);opacity:.75;font-weight:400;margin:0 .25em;font-size:.9em}
+.say .hold{color:var(--ox2);font-weight:600;margin:0 .3em;letter-spacing:-.1em}
+.cue{font-size:.92rem;color:var(--ink2);font-style:italic;font-family:var(--serif);font-size:1.08rem;margin-bottom:4px}
+.passage p{font-family:var(--serif);font-size:1.38rem;line-height:1.5;margin:0 0 1em}
+.passage em.land{font-style:normal;color:var(--brass2);font-weight:600;border-bottom:2px solid var(--brass)}
+.passage .br{color:var(--brass);opacity:.8;margin:0 .22em;font-size:.85em}
+.passage .hold{color:var(--ox2);font-weight:600;margin:0 .3em;letter-spacing:-.12em}
+.reps{display:flex;gap:10px;align-items:center;margin:10px 0}
+.reps .dot{width:26px;height:26px;border-radius:50%;border:2px solid var(--brass);background:transparent;flex:none;transition:background .15s}
+.reps .dot.on{background:var(--brass)}
+.reps .lbl{font-size:.78rem;color:var(--ink3);margin-left:4px}
+.verdict{display:inline-block;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border-radius:999px;font-weight:700}
+.verdict.strong{background:rgba(111,154,106,.2);color:#9fc89a}
+.verdict.mixed{background:rgba(195,154,85,.2);color:var(--brass2)}
+.verdict.weak{background:rgba(168,72,79,.22);color:#e08a90}
+.move{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:8px 0;cursor:pointer}
+.move .approach{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-bottom:3px}
+.move .line{font-family:var(--serif);font-size:1.15rem;line-height:1.3}
+.move.open{border-color:var(--brass)}
+.move .read{margin-top:10px;padding-top:10px;border-top:1px solid var(--line);font-size:.92rem;color:var(--ink2)}
+.move .read b{color:var(--ink);font-weight:600}
+.move .phr{font-family:var(--serif);font-size:1.2rem;color:var(--brass2);margin:6px 0}
+.hold-ring{width:150px;height:150px;border-radius:50%;margin:14px auto;display:flex;align-items:center;justify-content:center;background:conic-gradient(var(--brass) var(--p,0%),var(--panel2) 0);position:relative}
+.hold-ring::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--panel)}
+.hold-ring span{position:relative;font-family:var(--serif);font-size:2.6rem;color:var(--ink)}
+.hold-ring.done{background:var(--ox)}
+.orb{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 35% 35%,var(--brass2),var(--ox) 70%);margin:18px auto;transition:transform 1s linear;box-shadow:0 0 40px rgba(195,154,85,.25)}
+.center{text-align:center}
+.list .item{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+.list .item:active{background:var(--panel2)}
+.list .item .t{font-family:var(--serif);font-size:1.12rem;line-height:1.25}
+.list .item .m{font-size:.76rem;color:var(--ink3);margin-top:2px}
+.list .item .arrow{color:var(--ink3);flex:none}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;cursor:pointer}
+.tile:active{background:var(--panel2)}
+.tile .t{font-family:var(--serif);font-size:1.2rem}
+.tile .n{font-size:.74rem;color:var(--ink3);margin-top:2px}
+.back svg{width:16px;height:16px}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--ink2);font-size:.86rem;margin:4px 0 10px;padding:6px 0}
+.badge{display:inline-flex;min-width:18px;height:18px;border-radius:9px;background:var(--ox2);color:#fff;font-size:.68rem;font-weight:700;align-items:center;justify-content:center;padding:0 5px;margin-left:5px;vertical-align:middle}
+.empty{text-align:center;padding:28px 12px;color:var(--ink3)}
+.empty strong{display:block;font-family:var(--serif);font-size:1.35rem;color:var(--ink2);margin-bottom:6px;font-weight:500}
+.take{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.take audio{flex:1;min-width:0;height:34px}
+.rec.on{background:var(--ox2);border-color:var(--ox2);color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(138,42,56,.25)}}
+.pairrow{margin:8px 0;padding:12px 14px;background:var(--panel2);border:1px solid var(--line);border-radius:12px}
+.pairrow .weak{color:var(--ink3);text-decoration:line-through;text-decoration-color:rgba(168,72,79,.6);font-size:.95rem}
+.pairrow .strong{font-family:var(--serif);font-size:1.25rem;color:var(--ink);margin-top:4px}
+.flip{min-height:150px;display:flex;flex-direction:column;justify-content:center;text-align:center;cursor:pointer}
+.flip .front{font-family:var(--serif);font-size:1.6rem}
+.flip .backtxt{font-size:1rem;color:var(--ink2);margin-top:8px}
+.journal .entry{padding:12px 0;border-bottom:1px solid var(--line)}
+.journal .entry .d{font-size:.74rem;color:var(--ink3);letter-spacing:.06em;text-transform:uppercase}
+.journal .entry .lk{font-size:.8rem;color:var(--brass2);margin-top:3px}
+.journal .entry .tx{margin-top:5px;white-space:pre-wrap}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.stat div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.stat b{display:block;font-family:var(--serif);font-size:1.6rem;font-weight:500;color:var(--brass2)}
+.stat span{font-size:.7rem;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase}
+.syl{font-family:var(--serif);font-size:1.4rem;letter-spacing:.05em}
+nav.tabs{position:fixed;left:0;right:0;bottom:0;background:rgba(22,21,26,.96);backdrop-filter:blur(12px);border-top:1px solid var(--line);display:flex;padding:6px 4px calc(8px + var(--safe-b));z-index:20}
+nav.tabs button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);position:relative}
+nav.tabs button.on{color:var(--brass2)}
+nav.tabs svg{width:22px;height:22px}
+nav.tabs .badge{position:absolute;top:2px;right:calc(50% - 22px)}
+#toast{position:fixed;left:50%;bottom:calc(96px + var(--safe-b));transform:translateX(-50%) translateY(20px);background:var(--brass);color:#1a1510;padding:10px 16px;border-radius:12px;font-size:.88rem;font-weight:600;opacity:0;pointer-events:none;transition:all .25s;z-index:30;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.principle{font-family:var(--serif);font-size:1.12rem;line-height:1.45;color:var(--ink2);border-left:2px solid var(--brass);padding-left:12px;margin:10px 0 14px}
+.roomtag{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);font-weight:600}
+hr.sep{border:0;border-top:1px solid var(--line);margin:18px 0}
+.word{font-family:var(--serif);font-size:2.1rem;line-height:1.1;margin:4px 0}
+.sense{color:var(--ink2);font-size:.98rem;margin-bottom:10px}
+@media(min-width:600px){.tiles{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<header class="top"><div class="brand">The Lectern<small>Voice · Words · The Room</small></div><div class="date" id="hdrDate"></div></header>
+<main id="view"></main>
+<nav class="tabs" id="tabs"></nav>
+<div id="toast"></div>
+<input type="file" id="restoreFile" accept=".json,application/json" hidden>
+
+<script src="content-room.js"></script>
+<script src="content-register.js"></script>
+<script src="content-floor.js"></script>
+<script src="content-lexicon.js"></script>
+<script src="content-lectern.js"></script>
+<script>
+/* ===================== CONTENT ===================== */
+const ROOM = (window.LECTERN_ROOM||[]).map(s=>({...s, kind:"scenario", mode:"Judgment", source:"The Room"}));
+const REG = window.LECTERN_REGISTER||{scenarios:[],mouth:[],pairs:[],deck:[],principles:{},arc:[]};
+const FLOOR = window.LECTERN_FLOOR||{directness:[],interventions:[],pairs:[],words:[],diction:{endings:[],multi:[],sentences:[],lines:[]},twisters:[],resonance:[],breath:[],routine:[],registerNotes:{}};
+const SCEN = [...ROOM, ...REG.scenarios.map(s=>({...s, kind:"scenario", source:"The Register"}))];
+const SPOKEN = [
+  ...REG.mouth.map(d=>({...d, kind:"spoken", source:"The Register"})),
+  ...FLOOR.directness.map(d=>({...d, kind:"spoken", source:"The Floor", room:"Department"})),
+  ...FLOOR.interventions.map(d=>({...d, kind:"spoken", source:"The Floor", cue:d.room+" · "+d.fn, room:/board|committee/i.test(d.room)?"Council":"Department"})),
+  ...(window.LECTERN_ROOM_SPOKEN||[]).map(d=>({...d, kind:"spoken", source:"The Room", family:"From the Room", land:""}))
+];
+const WORDS = [...(window.LECTERN_LEXICON||[]).map(w=>({...w, kind:"word", source:"The Lectern"})), ...FLOOR.words.map(w=>({...w, kind:"word", source:"The Floor"}))];
+const PAIRS = [...REG.pairs.map(p=>({...p, kind:"pair", source:"The Register"})), ...FLOOR.pairs.map(p=>({...p, kind:"pair", source:"The Floor"}))];
+const DECK = REG.deck.map(c=>({...c, kind:"card", source:"The Register"}));
+const PASSAGES = (window.LECTERN_PASSAGES||[]).map(p=>({...p, kind:"passage", source:"The Lectern"}));
+const DICT = [
+  ...FLOOR.diction.endings.map(d=>({...d, kind:"diction", sub:"Endings", say:d.pair, note:d.tip})),
+  ...FLOOR.diction.multi.map(d=>({...d, kind:"diction", sub:"Long words", say:d.word, note:d.tip})),
+  ...FLOOR.diction.sentences.map(d=>({...d, kind:"diction", sub:"Attack", say:d.text})),
+  ...FLOOR.diction.lines.map(d=>({...d, kind:"diction", sub:"In a sentence", say:d.text})),
+  ...FLOOR.twisters.map(d=>({...d, kind:"diction", sub:"Twisters", say:d.text, note:d.tip}))
+];
+const ALL = {};
+for(const arr of [SCEN,SPOKEN,WORDS,PAIRS,DECK,PASSAGES,DICT]) for(const it of arr) ALL[it.id]=it;
+const ROOMS = ["Council","Department","Parents","Students","Bandstand","Personal","Positive"];
+const KINDLBL = {scenario:"Scenario", spoken:"Spoken", word:"Word", pair:"Pair", card:"Card", passage:"Passage", diction:"Diction"};
+
+/* ===================== STATE ===================== */
+const DAY = 86400000;
+const dayNum = () => Math.floor((Date.now() - new Date().getTimezoneOffset()*60000)/DAY);
+function lsGet(k,d){ try{ const v=JSON.parse(localStorage.getItem(k)||"null"); return v===null?d:v; }catch(e){ return d; } }
+let storageWarned=false;
+function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ if(!storageWarned){ storageWarned=true; toast("Storage is full. Make a backup."); } return false; } }
+let S = lsGet("lectern-state",{days:[],done:{},kept:[],reps:{},seen:{},lastOpen:0});
+let J = lsGet("lectern-journal",[]);
+function persist(){ lsSet("lectern-state",S); lsSet("lectern-journal",J); }
+function normalise(){
+  if(!Array.isArray(S.days)) S.days=[]; if(!S.done||typeof S.done!=="object") S.done={}; if(!Array.isArray(S.kept)) S.kept=[];
+  if(!S.reps||typeof S.reps!=="object") S.reps={}; if(!S.seen||typeof S.seen!=="object") S.seen={};
+  S.kept=S.kept.filter(k=>k&&typeof k.id==="string"&&ALL[k.id]);
+  if(!Array.isArray(J)) J=[];
+}
+normalise();
+const keptOf = id => S.kept.find(k=>k.id===id);
+function keep(id){ if(keptOf(id)){ S.kept=S.kept.filter(k=>k.id!==id); persist(); toast("Taken out of Review"); } else { S.kept.unshift({id, keptAt:Date.now(), interval:1, due:dayNum()+1}); persist(); toast("It'll come back tomorrow"); } }
+function markSeen(id){ S.seen[id]=(S.seen[id]||0)+1; }
+function dueItems(){ const d=dayNum(); return S.kept.filter(k=>(k.due??0)<=d); }
+
+/* ===================== UTIL ===================== */
+const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function mark(s){ // *land* → em, | → breath, || → hold
+  let t=esc(s);
+  t=t.replace(/\|\|/g,'<span class="hold">||</span>').replace(/ \| /g,' <span class="br">|</span> ');
+  t=t.replace(/\*(.+?)\*/g,'<em class="land">$1</em>');
+  return t;
+}
+function plain(s){ return String(s||"").replace(/\*(.+?)\*/g,"$1").replace(/\|\|/g,"").replace(/ \| /g," ").replace(/\s+/g," ").trim(); }
+function seeded(n){ let a=n>>>0; return ()=>{ a=(a+0x6D2B79F5)|0; let t=Math.imul(a^(a>>>15),1|a); t=(t+Math.imul(t^(t>>>7),61|t))^t; return ((t^(t>>>14))>>>0)/4294967296; }; }
+function pick(arr, salt){ if(!arr.length) return null; const r=seeded(dayNum()*7919+salt); return arr[Math.floor(r()*arr.length)]; }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),1600); }
+const I = {
+  today:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  library:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h5v14H4zM9 5h5v14H9zM15 6l4-1 3 13-4 1z"/></svg>',
+  lexicon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2zM8 7h6M8 11h8"/></svg>',
+  lectern:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M8 21h8M5 8l7-3 7 3M7 8v4l5 2 5-2V8"/></svg>',
+  review:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 14-5.3M19 3v4h-4M20 12a8 8 0 0 1-14 5.3M5 21v-4h4"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 5l-7 7 7 7"/></svg>',
+  play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 5v14l11-7z"/></svg>',
+  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+  pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l4-1 11-11-3-3L5 16z"/></svg>',
+  flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 21V4h11l-2 4 2 4H5"/></svg>',
+  shuffle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 4h4v4M4 20l16-16M4 4l5 5M15 15l5 5v-4"/></svg>',
+  down:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v12m-5-5 5 5 5-5M5 20h14"/></svg>',
+  up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V8m-5 5 5-5 5 5M5 4h14"/></svg>'
+};
+const ico = s => s;
+
+/* ===================== SPEECH ===================== */
+const canSpeak = "speechSynthesis" in window && typeof SpeechSynthesisUtterance!=="undefined";
+function pickVoice(){ const v=speechSynthesis.getVoices(); return v.find(x=>/en-AU/i.test(x.lang))||v.find(x=>/en-GB/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null; }
+function speak(text){ if(!canSpeak) return toast("Speech isn't available here"); speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(plain(text)); const v=pickVoice(); if(v) u.voice=v; u.rate=.92; u.pitch=.9; speechSynthesis.speak(u); }
+const listenBtn = text => canSpeak ? `<button class="btn small ghost" data-say="${esc(text)}">${I.play} Hear it</button>` : "";
+
+/* ===================== RECORDER (IndexedDB) ===================== */
+let dbp=null;
+function db(){ if(dbp) return dbp; dbp=new Promise((res,rej)=>{ try{ const r=indexedDB.open("lectern",1); r.onupgradeneeded=()=>{ const d=r.result; if(!d.objectStoreNames.contains("takes")){ const st=d.createObjectStore("takes",{keyPath:"id"}); st.createIndex("item","item"); } }; r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error); }catch(e){ rej(e); } }); return dbp; }
+async function takesFor(item){ try{ const d=await db(); return await new Promise((res,rej)=>{ const tx=d.transaction("takes"); const q=tx.objectStore("takes").index("item").getAll(item); q.onsuccess=()=>res((q.result||[]).sort((a,b)=>b.at-a.at)); q.onerror=()=>rej(q.error); }); }catch(e){ return []; } }
+async function saveTake(item, blob, dur){ const d=await db(); return new Promise((res,rej)=>{ const tx=d.transaction("takes","readwrite"); tx.objectStore("takes").put({id:"t"+Date.now(), item, at:Date.now(), dur, blob}); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+async function deleteTake(id){ const d=await db(); return new Promise((res,rej)=>{ const tx=d.transaction("takes","readwrite"); tx.objectStore("takes").delete(id); tx.oncomplete=()=>res(); tx.onerror=()=>rej(tx.error); }); }
+let rec=null, recChunks=[], recStart=0, recItem=null, recTimer=null;
+const canRecord = !!(navigator.mediaDevices && window.MediaRecorder);
+async function toggleRecord(item){
+  if(rec && rec.state==="recording"){ rec.stop(); return; }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const mime=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg"].find(m=>MediaRecorder.isTypeSupported(m))||"";
+    rec=new MediaRecorder(stream, mime?{mimeType:mime}:{}); recChunks=[]; recItem=item; recStart=Date.now();
+    rec.ondataavailable=e=>{ if(e.data.size) recChunks.push(e.data); };
+    rec.onstop=async()=>{ stream.getTracks().forEach(t=>t.stop()); clearInterval(recTimer); const blob=new Blob(recChunks,{type:rec.mimeType||"audio/webm"}); const dur=Math.round((Date.now()-recStart)/1000); rec=null; if(dur>=1){ await saveTake(item,blob,dur); toast("Take saved"); } render(); };
+    rec.start(); render();
+    recTimer=setInterval(()=>{ const el=document.getElementById("recTime"); if(el) el.textContent=fmtDur(Math.round((Date.now()-recStart)/1000)); },500);
+  }catch(e){ toast("Microphone not available"); }
+}
+const fmtDur = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+async function takesHtml(item){
+  if(!canRecord) return "";
+  const takes=await takesFor(item);
+  const recording = rec && rec.state==="recording" && recItem===item;
+  return `<div class="row" style="margin-top:12px"><button class="btn rec ${recording?"on":""}" data-rec="${item}">${I.mic} ${recording?`Stop <span id="recTime">0:00</span>`:"Record a take"}</button>${takes.length?`<span class="note">${takes.length} take${takes.length>1?"s":""} on this phone</span>`:""}</div>
+  ${takes.map(t=>`<div class="take"><span class="note">${new Date(t.at).toLocaleDateString("en-AU",{day:"numeric",month:"short"})} · ${fmtDur(t.dur)}</span><audio controls preload="none" src="${URL.createObjectURL(t.blob)}"></audio><button class="btn small ghost" data-deltake="${t.id}">Delete</button></div>`).join("")}`;
+}
+
+/* ===================== WIDGETS ===================== */
+function repDots(id, n=5){ const c=S.reps[id]||0; return `<div class="reps" data-reps="${id}">${Array.from({length:n},(_,i)=>`<button class="dot ${i<c?"on":""}" data-rep="${i+1}" aria-label="rep ${i+1}"></button>`).join("")}<span class="lbl">${c>=n?"Done":"Say it. Tap a dot each time."}</span></div>`; }
+function keepBtn(id){ const k=keptOf(id); return `<button class="btn small ${k?"on":"brass"}" data-keep="${id}">${I.flag} ${k?"In Review":"Needs work"}</button>`; }
+function reflectBtn(id){ return `<button class="btn small ghost" data-reflect="${id}">${I.pen} Reflect</button>`; }
+function holdRing(sec, id){ return `<div class="hold-ring" id="hold-${id}" data-sec="${sec}"><span>${sec}</span></div><div class="center"><button class="btn primary" data-hold="${id}">Hold the silence</button></div>`; }
+let holdTimers={};
+function startHold(id){
+  const el=document.getElementById("hold-"+id); if(!el) return; const total=+el.dataset.sec; clearInterval(holdTimers[id]); el.classList.remove("done");
+  const t0=Date.now(); const span=el.querySelector("span");
+  holdTimers[id]=setInterval(()=>{ const e=(Date.now()-t0)/1000; const left=Math.max(0,total-e); span.textContent=left>0?Math.ceil(left):"✓"; el.style.setProperty("--p",Math.min(100,e/total*100)+"%"); if(e>=total){ clearInterval(holdTimers[id]); el.classList.add("done"); if(navigator.vibrate) navigator.vibrate(40); const d=document.querySelector(`[data-reps="${id}"] .dot:not(.on)`); if(d) d.click(); } },100);
+}
+
+/* ===================== RENDERERS ===================== */
+function roomLine(it){ return `<span class="roomtag">${esc(it.room||"")}</span>${it.family?` <span class="note">· ${esc(it.family)}</span>`:""}${it.mode?` <span class="note">· ${esc(it.mode)}</span>`:""}`; }
+
+function rScenario(s, opts={}){
+  const open=opts.open||{};
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between">${roomLine(s)}<span class="note">${esc(s.tag||s.source)}</span></div>
+    <p class="say" style="font-size:1.3rem;margin-top:10px">${esc(s.setup)}</p>
+    ${s.atmos?`<p class="cue">${esc(s.atmos)}</p>`:""}
+    <p class="note" style="margin:6px 0 2px">Pick the move you'd make. Then read where it goes.</p>
+    ${s.cards.map((c,i)=>`<div class="move ${open[i]?"open":""}" data-move="${s.id}:${i}">
+      ${c.approach?`<div class="approach">${esc(c.approach)}</div>`:""}
+      <div class="line">${esc(c.line)}</div>
+      ${open[i]?`<div class="read"><span class="verdict ${c.verdict}">${c.verdict}</span><p style="margin-top:8px">${esc(c.outcome)}</p>${c.phrasing?`<div class="phr">${esc(c.phrasing)}</div>${listenBtn(c.phrasing)}`:""}${c.stronger?`<p style="margin-top:8px"><b>The sharper move.</b> ${esc(c.stronger)}</p>`:""}</div>`:""}
+    </div>`).join("")}
+    <div class="row" style="margin-top:12px">${keepBtn(s.id)}${reflectBtn(s.id)}${opts.next?`<button class="btn small ghost" style="margin-left:auto" data-next="${opts.next}">Next ${I.shuffle}</button>`:""}</div>
+  </div>`;
+}
+function rSpoken(d, opts={}){
+  const sayHtml = d.land && !d.say.includes("*") ? mark(d.say.replace(new RegExp("\\b("+d.land.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")\\b"),"*$1*")) : mark(d.say);
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between">${roomLine(d)}<span class="note">${esc(d.source)}</span></div>
+    ${d.cue?`<p class="cue" style="margin-top:8px">${esc(d.cue)}</p>`:""}
+    ${d.silent?`<p class="say" style="color:var(--ink3);font-style:italic">Say nothing.</p>${holdRing(5,d.id)}`:`<div class="say big">${sayHtml}</div>${d.beat?holdRing(d.beat,d.id):""}`}
+    <p class="sub" style="margin-top:10px">${esc(d.note)}</p>
+    ${repDots(d.id)}
+    <div class="row">${d.say?listenBtn(d.say):""}${keepBtn(d.id)}${reflectBtn(d.id)}${opts.next?`<button class="btn small ghost" style="margin-left:auto" data-next="${opts.next}">Next ${I.shuffle}</button>`:""}</div>
+    <div id="takes-${d.id}" data-takes="${d.id}"></div>
+  </div>`;
+}
+function rWord(w, opts={}){
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><span class="roomtag">${esc(w.register)}</span><span class="note">${esc(w.source)}</span></div>
+    <div class="word">${esc(w.word)}</div>
+    <div class="sense">${esc(w.sense)}</div>
+    <div class="say">${mark(w.say)}</div>
+    ${w.note?`<p class="sub">${esc(w.note)}</p>`:""}
+    ${repDots(w.id,3)}
+    <div class="row">${listenBtn(w.say)}${keepBtn(w.id)}${reflectBtn(w.id)}${opts.next?`<button class="btn small ghost" style="margin-left:auto" data-next="${opts.next}">Next ${I.shuffle}</button>`:""}</div>
+  </div>`;
+}
+function rPair(p, opts={}){
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><span class="roomtag">${esc(p.family)}</span><span class="note">${esc(p.source)}</span></div>
+    <div class="pairrow"><div class="weak">${esc(p.weak)}</div><div class="strong">${esc(p.strong)}</div></div>
+    ${p.note?`<p class="sub">${esc(p.note)}</p>`:""}
+    ${repDots(p.id)}
+    <div class="row">${listenBtn(p.strong)}${keepBtn(p.id)}${opts.next?`<button class="btn small ghost" style="margin-left:auto" data-next="${opts.next}">Next ${I.shuffle}</button>`:""}</div>
+  </div>`;
+}
+function rDiction(d, opts={}){
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><span class="roomtag">${esc(d.sub)}</span><span class="note">The Floor</span></div>
+    ${d.syl?`<div class="word">${esc(d.word)}</div><div class="syl">${esc(d.syl)}</div>`:`<div class="say big">${mark(d.say)}</div>`}
+    ${d.note?`<p class="sub" style="margin-top:8px">${esc(d.note)}</p>`:""}
+    ${repDots(d.id,3)}
+    <div class="row">${listenBtn(d.word||d.say)}${keepBtn(d.id)}${opts.next?`<button class="btn small ghost" style="margin-left:auto" data-next="${opts.next}">Next ${I.shuffle}</button>`:""}</div>
+  </div>`;
+}
+function rCard(c, flipped){
+  return `<div class="card flip" data-flip="${c.id}"><div class="front">${esc(c.front)}</div>${flipped?`<div class="backtxt">${esc(c.back)}</div>`:`<div class="note" style="margin-top:8px">Tap to turn</div>`}</div>`;
+}
+function rPassage(p, opts={}){
+  const paras=p.text.split(/\n\s*\n/);
+  return `<div class="card">
+    <div class="row" style="justify-content:space-between"><span class="roomtag">${esc(p.family)}</span><span class="note">about ${p.seconds}s spoken</span></div>
+    <h2 style="margin:6px 0 2px">${esc(p.title)}</h2>
+    <p class="cue">${esc(p.setting)}</p>
+    <div class="passage" style="margin-top:12px">${paras.map(x=>`<p>${mark(x)}</p>`).join("")}</div>
+    <p class="note"><span class="br" style="color:var(--brass)">|</span> breathe &nbsp; <span class="hold" style="color:var(--ox2)">||</span> full stop, hold a beat &nbsp; <em class="land" style="font-style:normal;color:var(--brass2)">word</em> land it</p>
+    <p class="sub" style="margin-top:8px"><b>Delivery.</b> ${esc(p.note)}</p>
+    <div class="row" style="margin-top:6px"><button class="btn brass" data-timer="${p.id}:${p.seconds}">Time a read</button><span class="note" id="ptime-${p.id}"></span></div>
+    ${repDots(p.id,3)}
+    <div class="row">${listenBtn(p.text)}${keepBtn(p.id)}${reflectBtn(p.id)}</div>
+    <div id="takes-${p.id}" data-takes="${p.id}"></div>
+  </div>`;
+}
+function rItem(it, opts){ return it.kind==="scenario"?rScenario(it,opts):it.kind==="spoken"?rSpoken(it,opts):it.kind==="word"?rWord(it,opts):it.kind==="pair"?rPair(it,opts):it.kind==="passage"?rPassage(it,opts):it.kind==="diction"?rDiction(it,opts):rCard(it,true); }
+let moveOpen={};
+
+/* ===================== VIEWS ===================== */
+let tab="today", view=null, libSec="scenarios", libRoom="All", libQuery="", lexReg="All", lexQuery="", lecFam="All", revSec="due", revShow=false, deckOrder=null, deckIdx=0, deckFlip=false, randomSeq={};
+
+function todaySet(){
+  const d=dayNum();
+  const judg=SCEN;
+  const spoken=SPOKEN.filter(x=>!x.silent && !x.beat && x.family!=="From the Room" && x.family!=="Interventions");
+  const holds=SPOKEN.filter(x=>x.silent||x.beat);
+  return { scenario:pick(judg,1), spoken:pick(spoken,2), word:pick(WORDS,3), hold:pick(holds,4), passage:pick(PASSAGES,5), pair:pick(PAIRS,6) };
+}
+function todayDone(key){ const d=dayNum(); return !!((S.done[d]||{})[key]); }
+function setDone(key,v=true){ const d=dayNum(); S.done[d]=S.done[d]||{}; S.done[d][key]=v; if(v && !S.days.includes(d)) S.days.push(d); persist(); }
+
+function vToday(){
+  const T=todaySet(); const keys=["scenario","spoken","word","hold","pair","passage"];
+  const n=keys.filter(todayDone).length;
+  const due=dueItems().length;
+  if(view){ // open item from today
+    const key=view.replace("today:",""); const it=T[key]; if(!it) { view=null; return vToday(); }
+    return `<button class="back" data-back>${I.back} Today</button>
+      <div class="eyebrow">${key==="hold"?"The held beat":key==="passage"?"The stage":KINDLBL[it.kind]} · today</div>
+      ${rItem(it,{open:moveOpen[it.id]||{}})}
+      <div class="row" style="margin:6px 0 20px"><button class="btn primary" data-done="${key}">${todayDone(key)?"Done. Back to Today":"Mark done"}</button></div>`;
+  }
+  const greet=new Date().getHours()<12?"Morning":new Date().getHours()<17?"Afternoon":"Evening";
+  const labels={scenario:["The room","One judgment call"],spoken:["The line","Say it five times"],word:["The word","One word, said in a sentence"],hold:["The held beat","A silence, timed"],pair:["Clean speech","Weak line, strong line"],passage:["The stage","Two minutes at the lectern"]};
+  return `<h1>${greet}.</h1>
+    <p class="sub">${n===keys.length?"Today's set is done. Anything below is extra.":n?`${n} of ${keys.length} done.`:"Six small things. Five minutes if you do the first four. Say everything out loud."}</p>
+    ${due?`<div class="card ox tap" data-tab="review"><div class="eyebrow">Review</div><div class="say" style="font-size:1.25rem;margin:0">${due} thing${due>1?"s":""} you marked came back today.</div></div>`:""}
+    ${keys.map(k=>{ const it=T[k]; if(!it) return ""; const done=todayDone(k); const preview = it.kind==="scenario"?it.setup : it.kind==="spoken"?(it.silent?it.cue:(it.say||it.cue)) : it.kind==="word"?it.word : it.kind==="pair"?it.strong : it.title;
+      return `<div class="card tap" data-open="today:${k}">${done?`<div class="done">✓</div>`:`<div class="k">${esc(labels[k][1])}</div>`}<div class="eyebrow">${labels[k][0]}</div><div class="say" style="font-size:${it.kind==="word"?"1.7rem":"1.25rem"};margin:4px 0 0;${done?"color:var(--ink3)":""}">${esc(preview.length>120?preview.slice(0,117)+"…":preview)}</div>${it.room||it.register||it.family?`<div class="note" style="margin-top:4px">${esc(it.room||it.register||it.family)}</div>`:""}</div>`; }).join("")}
+    <hr class="sep">
+    <div class="eyebrow">Warm up first</div>
+    <div class="tiles"><div class="tile" data-tab="library" data-sec="warmup"><div class="t">Breath</div><div class="n">Settle, Box, Pre-meeting</div></div><div class="tile" data-tab="library" data-sec="diction"><div class="t">Diction</div><div class="n">${DICT.length} drills</div></div></div>
+    <div class="stat" style="margin-top:14px"><div><b>${S.days.length}</b><span>days practised</span></div><div><b>${S.kept.length}</b><span>in review</span></div><div><b>${J.length}</b><span>reflections</span></div></div>`;
+}
+
+function vLibrary(){
+  if(view && ALL[view]){ const it=ALL[view]; const seq=randomSeq[libSec]; return `<button class="back" data-back>${I.back} Library</button>${rItem(it,{open:moveOpen[it.id]||{}, next:seq?libSec:""})}`; }
+  const secs=[["scenarios","Scenarios",SCEN.length],["spoken","Spoken",SPOKEN.length],["pairs","Pairs",PAIRS.length],["deck","Deck",DECK.length],["diction","Diction",DICT.length],["warmup","Warm-up",""]];
+  let body="";
+  const q=libQuery.trim().toLowerCase();
+  const filt=arr=>arr.filter(x=>(libRoom==="All"||x.room===libRoom)&&(!q||JSON.stringify(x).toLowerCase().includes(q)));
+  if(libSec==="scenarios"){
+    const modes=["Judgment","Rapport","Thread","Cut"];
+    const list=filt(SCEN);
+    body=`${REG.principles && libRoom==="All" && !q?`<p class="principle">${esc(ROOM.length?"Pick the move you'd make. Read where it goes. The Room taught judgment; The Register taught the handshake, the thread and the cut. They live together now.":"")}</p>`:""}
+      <div class="row" style="margin-bottom:8px"><button class="btn brass" data-random="scenarios">${I.shuffle} Random scenario</button><span class="note">${list.length} of ${SCEN.length}</span></div>
+      ${modes.map(m=>{ const ms=list.filter(s=>s.mode===m); if(!ms.length) return ""; return `<div class="eyebrow" style="margin-top:14px">${m} · ${ms.length}</div><div class="list">${ms.map(s=>`<div class="item" data-open="${s.id}"><div><div class="t">${esc(s.setup.length>110?s.setup.slice(0,107)+"…":s.setup)}</div><div class="m">${esc(s.room)}${s.tag?" · "+esc(s.tag):""}${S.seen[s.id]?" · seen":""}${keptOf(s.id)?" · in review":""}</div></div><span class="arrow">›</span></div>`).join("")}</div>`; }).join("")}`;
+  } else if(libSec==="spoken"){
+    const fams=[...new Set(SPOKEN.map(d=>d.family))];
+    const list=filt(SPOKEN);
+    body=`<p class="principle">${esc(REG.principles.Mouth||"Read the cue, say the line out loud, five times. Land the stressed word. Hold the silence after the full stop. Said silently, these do nothing.")}</p>
+      <div class="row" style="margin-bottom:8px"><button class="btn brass" data-random="spoken">${I.shuffle} Random line</button><span class="note">${list.length} of ${SPOKEN.length}</span></div>
+      ${fams.map(f=>{ const fs=list.filter(d=>d.family===f); if(!fs.length) return ""; return `<div class="eyebrow" style="margin-top:14px">${esc(f)} · ${fs.length}</div><div class="list">${fs.map(d=>`<div class="item" data-open="${d.id}"><div><div class="t">${esc(d.silent?"(silence) "+d.cue:(d.say||d.cue).length>90?(d.say||d.cue).slice(0,87)+"…":plain(d.say||d.cue))}</div><div class="m">${esc(d.cue&&d.say?d.cue.slice(0,70):d.room||"")}${keptOf(d.id)?" · in review":""}</div></div><span class="arrow">›</span></div>`).join("")}</div>`; }).join("")}`;
+  } else if(libSec==="pairs"){
+    const fams=[...new Set(PAIRS.map(p=>p.family))]; const list=PAIRS.filter(x=>!q||JSON.stringify(x).toLowerCase().includes(q));
+    body=`<p class="principle">${esc(REG.principles.Clean||"Drop the hedge. Say the strong one aloud.")}</p><div class="row" style="margin-bottom:8px"><button class="btn brass" data-random="pairs">${I.shuffle} Random pair</button></div>
+      ${fams.map(f=>{ const fs=list.filter(p=>p.family===f); if(!fs.length) return ""; return `<div class="eyebrow" style="margin-top:14px">${esc(f)} · ${fs.length}</div>${fs.map(p=>`<div class="pairrow" data-open="${p.id}" style="cursor:pointer"><div class="weak">${esc(p.weak)}</div><div class="strong">${esc(p.strong)}</div></div>`).join("")}`; }).join("")}`;
+  } else if(libSec==="deck"){
+    if(!deckOrder) deckOrder=shuffle(DECK.map(c=>c.id));
+    const c=ALL[deckOrder[deckIdx%deckOrder.length]];
+    body=`<p class="principle">The rails, one at a time. Read one before a meeting, or shuffle cold.</p>${rCard(c,deckFlip)}<div class="row" style="justify-content:space-between"><span class="note">${deckIdx%deckOrder.length+1} of ${deckOrder.length}</span><div class="row"><button class="btn" data-deck="prev">Previous</button><button class="btn" data-deck="next">Next</button><button class="btn ghost" data-deck="shuffle">${I.shuffle}</button></div></div>`;
+  } else if(libSec==="diction"){
+    const subs=[...new Set(DICT.map(d=>d.sub))]; const list=DICT.filter(x=>!q||JSON.stringify(x).toLowerCase().includes(q));
+    body=`<p class="principle">Articulation muscles are muscles. Over-articulate here so the room gets the normal version.</p><div class="row" style="margin-bottom:8px"><button class="btn brass" data-random="diction">${I.shuffle} Random drill</button></div>
+      ${subs.map(s=>{ const ds=list.filter(d=>d.sub===s); if(!ds.length) return ""; return `<div class="eyebrow" style="margin-top:14px">${esc(s)} · ${ds.length}</div><div class="list">${ds.map(d=>`<div class="item" data-open="${d.id}"><div><div class="t">${esc(d.word||plain(d.say))}</div><div class="m">${esc(d.syl||d.note||"")}</div></div><span class="arrow">›</span></div>`).join("")}</div>`; }).join("")}`;
+  } else if(libSec==="warmup"){
+    body=vWarmup();
+  }
+  const showRoom=libSec==="scenarios"||libSec==="spoken";
+  return `<h1>Library</h1><p class="sub">Everything from The Floor, The Room and The Register, in one place. Nothing cut.</p>
+    <div class="seg">${secs.map(s=>`<button class="${libSec===s[0]?"on":""}" data-sec="${s[0]}">${s[1]}</button>`).join("")}</div>
+    ${libSec!=="deck"&&libSec!=="warmup"?`<input class="search" id="libQ" placeholder="Search" value="${esc(libQuery)}">`:""}
+    ${showRoom?`<div class="pills">${["All",...ROOMS].map(r=>{ const n=r==="All"?"":(libSec==="scenarios"?SCEN:SPOKEN).filter(x=>x.room===r).length; if(r!=="All"&&!n) return ""; return `<button class="pill ${libRoom===r?"on":""}" data-room="${r}">${r}${n?`<span class="n">${n}</span>`:""}</button>`; }).join("")}</div>`:""}
+    ${body}`;
+}
+
+let breath={on:false,pat:0,phase:0,left:0,timer:null};
+function vWarmup(){
+  const pats=FLOOR.breath.length?FLOOR.breath:[{name:"Settle",pattern:[4,4,6,0]}];
+  const p=pats[breath.pat]; const names=["Breathe in","Hold","Breathe out","Hold"];
+  return `<div class="eyebrow">Breath</div><p class="sub">Hand on your stomach, not your chest. One round in the car before a meeting.</p>
+    <div class="row">${pats.map((x,i)=>`<button class="btn small ${i===breath.pat?"on":""}" data-pat="${i}">${esc(x.name)} · ${x.pattern.filter(Boolean).join("-")}</button>`).join("")}</div>
+    <div class="orb" id="orb" style="transform:scale(${breath.on&&breath.phase===0?1.25:breath.on&&breath.phase===2?.85:1})"></div>
+    <div class="center"><div class="say" id="bphase">${breath.on?names[breath.phase]:"Ready"}</div><div class="note" id="bcount">${breath.on?breath.left:"Press begin and breathe with the orb"}</div><button class="btn primary" style="margin-top:10px" data-breath>${breath.on?"Stop":"Begin"}</button></div>
+    <hr class="sep"><div class="eyebrow">Tongue and lip</div><p class="sub">Say each slowly, then fast, three times.</p>
+    ${FLOOR.twisters.map(t=>`<div class="pairrow" data-open="${t.id}" style="cursor:pointer"><div class="strong" style="margin:0">${esc(t.text)}</div><div class="note">${esc(t.tip)}</div></div>`).join("")}
+    <hr class="sep"><div class="eyebrow">Resonance</div><p class="sub">Find the chest, not the throat.</p>
+    ${FLOOR.resonance.map(r=>`<div class="pairrow"><div class="strong" style="margin:0">${esc(r.line)}</div><div class="note" style="margin-top:4px">${esc(r.note)}</div></div>`).join("")}
+    <hr class="sep"><div class="eyebrow">The six-minute routine</div>
+    ${FLOOR.routine.map((r,i)=>`<div class="pairrow" style="display:flex;gap:12px"><div class="serif" style="font-size:1.5rem;color:var(--brass);width:26px;flex:none">${i+1}</div><div><div class="strong" style="margin:0;font-size:1.15rem">${esc(r.t)}</div><div class="note">${esc(r.d)} <span style="color:var(--brass)">${esc(r.time)}</span></div></div></div>`).join("")}`;
+}
+function breathTick(){
+  const p=(FLOOR.breath[breath.pat]||{pattern:[4,4,6,0]}).pattern;
+  breath.left--; if(breath.left<=0){ do{ breath.phase=(breath.phase+1)%4; }while(p[breath.phase]===0); breath.left=p[breath.phase]; }
+  const names=["Breathe in","Hold","Breathe out","Hold"]; const ph=document.getElementById("bphase"), c=document.getElementById("bcount"), orb=document.getElementById("orb");
+  if(!ph){ clearInterval(breath.timer); breath.on=false; return; }
+  ph.textContent=names[breath.phase]; c.textContent=breath.left; orb.style.transitionDuration=p[breath.phase]+"s"; orb.style.transform=`scale(${breath.phase===0?1.25:breath.phase===2?.85:(breath.phase===1?1.25:.85)})`;
+}
+
+function vLexicon(){
+  if(view && ALL[view]){ return `<button class="back" data-back>${I.back} Lexicon</button>${rWord(ALL[view],{next:randomSeq.lexicon?"lexicon":""})}`; }
+  const regs=[...new Set(WORDS.map(w=>w.register))];
+  const q=lexQuery.trim().toLowerCase();
+  const list=WORDS.filter(w=>(lexReg==="All"||w.register===lexReg)&&(!q||(w.word+" "+w.sense+" "+w.say).toLowerCase().includes(q)));
+  const note=lexReg!=="All"&&FLOOR.registerNotes[lexReg];
+  return `<h1>Lexicon</h1><p class="sub">Words by register. The definition makes it yours; the sentence makes it usable. Say the sentence.</p>
+    <input class="search" id="lexQ" placeholder="Search words" value="${esc(lexQuery)}">
+    <div class="pills">${["All",...regs].map(r=>`<button class="pill ${lexReg===r?"on":""}" data-reg="${r}">${esc(r)}${r!=="All"?`<span class="n">${WORDS.filter(w=>w.register===r).length}</span>`:""}</button>`).join("")}</div>
+    ${note?`<p class="principle">${esc(note)}</p>`:""}
+    <div class="row" style="margin-bottom:6px"><button class="btn brass" data-random="lexicon">${I.shuffle} Random word</button><span class="note">${list.length} of ${WORDS.length}</span></div>
+    <div class="list">${list.map(w=>`<div class="item" data-open="${w.id}"><div><div class="t">${esc(w.word)}</div><div class="m">${esc(w.sense.length>80?w.sense.slice(0,77)+"…":w.sense)}${keptOf(w.id)?" · in review":""}</div></div><span class="arrow">›</span></div>`).join("")}</div>`;
+}
+
+function vLectern(){
+  if(view && ALL[view]) return `<button class="back" data-back>${I.back} Lectern</button>${rPassage(ALL[view])}`;
+  const fams=[...new Set(PASSAGES.map(p=>p.family))];
+  const list=PASSAGES.filter(p=>lecFam==="All"||p.family===lecFam);
+  return `<h1>Lectern</h1><p class="sub">Public speaking, read aloud, standing, at the speed of the room. Breath marks are real. Record a take and listen back without flinching.</p>
+    <div class="pills">${["All",...fams].map(f=>`<button class="pill ${lecFam===f?"on":""}" data-fam="${f}">${esc(f)}</button>`).join("")}</div>
+    <div class="list">${list.map(p=>`<div class="item" data-open="${p.id}"><div><div class="t">${esc(p.title)}</div><div class="m">${esc(p.family)} · about ${p.seconds}s${keptOf(p.id)?" · in review":""}${(S.reps[p.id]||0)>=3?" · read":""}</div></div><span class="arrow">›</span></div>`).join("")}</div>
+    <hr class="sep"><div class="eyebrow">Also at the lectern</div><p class="sub">The longer spoken interventions from The Floor, by room.</p>
+    <div class="list">${SPOKEN.filter(d=>d.family==="Interventions").map(d=>`<div class="item" data-openlib="${d.id}"><div><div class="t">${esc(d.cue)}</div><div class="m">${esc(plain(d.say).slice(0,80))}…</div></div><span class="arrow">›</span></div>`).join("")}</div>`;
+}
+
+function vReview(){
+  const due=dueItems();
+  const secs=[["due",`Due${due.length?`<span class="badge">${due.length}</span>`:""}`],["journal","Journal"],["backup","Backup"]];
+  let body="";
+  if(revSec==="due"){
+    if(!S.kept.length) body=`<div class="empty"><strong>Nothing in review yet</strong>Mark anything "Needs work" and it comes back tomorrow, then at growing intervals, until it's yours.</div>`;
+    else if(!due.length){ const d=Math.min(...S.kept.map(k=>k.due??dayNum()))-dayNum(); body=`<div class="empty"><strong>All caught up</strong>Next one is due ${d<=1?"tomorrow":`in ${d} days`}. ${S.kept.length} in the queue.</div>`; }
+    else { const it=ALL[due[0].id]; body=`<p class="note">${due.length} due. ${revShow?"":"Say what you'd say first. Then show it."}</p>${revShow?rItem(it,{open:moveOpen[it.id]||{}}):`<div class="card"><div class="eyebrow">${KINDLBL[it.kind]} · ${esc(it.room||it.register||it.family||"")}</div><div class="say">${esc(it.kind==="scenario"?it.setup:it.kind==="spoken"?(it.cue||plain(it.say)):it.kind==="word"?it.word:it.kind==="pair"?it.weak:it.kind==="passage"?it.title:it.word||plain(it.say))}</div><div class="row"><button class="btn primary" data-reveal>Show it</button></div></div>`}
+      ${revShow?`<div class="row" style="margin:6px 0 20px"><button class="btn" data-grade="again">Missed it</button><button class="btn primary" data-grade="good" style="margin-left:auto">Got it</button></div>`:""}`; }
+    if(S.kept.length) body+=`<hr class="sep"><div class="eyebrow">In the queue · ${S.kept.length}</div><div class="list">${S.kept.map(k=>{ const it=ALL[k.id]; const d=(k.due??0)-dayNum(); return `<div class="item" data-openany="${k.id}"><div><div class="t">${esc(it.kind==="scenario"?it.setup.slice(0,80)+"…":it.kind==="word"?it.word:it.kind==="passage"?it.title:plain(it.say||it.strong||it.cue||"").slice(0,80))}</div><div class="m">${KINDLBL[it.kind]} · ${d<=0?"due now":d===1?"tomorrow":`in ${d} days`}</div></div><span class="arrow">›</span></div>`; }).join("")}</div>`;
+  } else if(revSec==="journal"){
+    body=vJournal();
+  } else {
+    body=`<p class="sub">Your reps, your review queue and your reflections live only on this phone. A backup is one small file. Recordings stay on the phone and aren't in it.</p>
+      <div class="row"><button class="btn brass" data-export>${I.down} Full backup</button><button class="btn" data-restore>${I.up} Restore</button><button class="btn ghost" data-exportmd>${I.down} Reflections (.md)</button></div>
+      <div class="stat" style="margin-top:16px"><div><b>${Object.keys(S.reps).length}</b><span>items practised</span></div><div><b>${Object.values(S.reps).reduce((a,b)=>a+b,0)}</b><span>reps said</span></div><div><b>${SCEN.length+SPOKEN.length+WORDS.length+PAIRS.length+DECK.length+PASSAGES.length+DICT.length}</b><span>items in the app</span></div></div>
+      <hr class="sep"><div class="eyebrow">What's in here</div><p class="note">${SCEN.length} scenarios (${ROOM.length} from The Room, ${REG.scenarios.length} from The Register) · ${SPOKEN.length} spoken lines · ${WORDS.length} words · ${PAIRS.length} clean-speech pairs · ${DICT.length} diction drills · ${DECK.length} deck cards · ${PASSAGES.length} passages.</p>`;
+  }
+  return `<h1>Review</h1><div class="seg">${secs.map(s=>`<button class="${revSec===s[0]?"on":""}" data-rsec="${s[0]}">${s[1]}</button>`).join("")}</div>${body}`;
+}
+
+let composing=null; // {link}
+function vJournal(){
+  const entries=J.slice().sort((a,b)=>b.t-a.t);
+  const linkName=id=>{ const it=ALL[id]; if(!it) return ""; return it.kind==="scenario"?it.setup.slice(0,60)+"…":it.kind==="word"?it.word:it.kind==="passage"?it.title:plain(it.say||it.strong||it.cue||"").slice(0,60); };
+  return `<p class="sub">After a real meeting, a concert, a hard phone call: what happened, what you said, what you'd say next time. Link it to the item it matched if there was one.</p>
+    ${composing?`<div class="card ox"><div class="eyebrow">New reflection${composing.link?` · ${esc(KINDLBL[ALL[composing.link].kind])}`:""}</div>${composing.link?`<p class="note">${esc(linkName(composing.link))}</p>`:""}<textarea class="search" id="jtext" placeholder="What happened. What you said. What you'd say next time.">${esc(composing.text||"")}</textarea><div class="row"><button class="btn primary" data-jsave>Save</button><button class="btn ghost" data-jcancel>Cancel</button></div></div>`:`<div class="row" style="margin-bottom:8px"><button class="btn brass" data-reflect="">${I.pen} New reflection</button></div>`}
+    <div class="journal">${entries.length?entries.map(e=>`<div class="entry"><div class="d">${new Date(e.t).toLocaleDateString("en-AU",{weekday:"short",day:"numeric",month:"short",year:"numeric"})}</div>${e.link&&ALL[e.link]?`<div class="lk" data-openany="${e.link}" style="cursor:pointer">${esc(linkName(e.link))} ›</div>`:""}<div class="tx">${esc(e.text)}</div><div class="row" style="margin-top:6px"><button class="btn small ghost" data-jedit="${e.id}">Edit</button><button class="btn small ghost" data-jdel="${e.id}">Delete</button></div></div>`).join(""):`<div class="empty"><strong>No reflections yet</strong>The app remembers the drills. This is where it remembers you.</div>`}</div>`;
+}
+
+/* ===================== BACKUP ===================== */
+const stamp=()=>new Date().toISOString().slice(0,10);
+async function offerFile(filename,text,msg){ const type=filename.endsWith(".json")?"application/json":"text/markdown"; try{ const url=URL.createObjectURL(new Blob([text],{type})); const a=document.createElement("a"); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),4000); toast("Saved to your downloads"); return; }catch(e){} try{ await navigator.clipboard.writeText(text); toast(msg); }catch(e){ toast("Saving isn't available here"); } }
+function exportBackup(){ offerFile(`lectern-backup-${stamp()}.json`, JSON.stringify({app:"lectern",version:1,exported:new Date().toISOString(),state:S,journal:J}), "Backup copied to your clipboard"); }
+function exportMd(){ const L=["# The Lectern · reflections","",`Exported ${new Date().toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"})}.`,""]; for(const e of J.slice().sort((a,b)=>a.t-b.t)){ L.push(`## ${new Date(e.t).toLocaleDateString("en-AU",{day:"numeric",month:"long",year:"numeric"})}`,""); if(e.link&&ALL[e.link]){ const it=ALL[e.link]; L.push(`*${KINDLBL[it.kind]}: ${it.kind==="scenario"?it.setup:it.kind==="word"?it.word:it.kind==="passage"?it.title:plain(it.say||it.strong||"")}*`,""); } L.push(e.text,"","---",""); } offerFile(`lectern-reflections-${stamp()}.md`, L.join("\n"), "Copied to your clipboard"); }
+function restoreBackup(text){
+  let b; try{ b=JSON.parse(text); }catch(e){ return toast("That isn't a Lectern backup"); }
+  if(!b||b.app!=="lectern"||!b.state) return toast("That isn't a Lectern backup");
+  const st=b.state; const have=new Set(S.kept.map(k=>k.id));
+  S.kept=[...S.kept, ...(Array.isArray(st.kept)?st.kept:[]).filter(k=>k&&!have.has(k.id))];
+  S.days=[...new Set([...S.days, ...(Array.isArray(st.days)?st.days:[])])];
+  for(const [k,v] of Object.entries(st.reps||{})) S.reps[k]=Math.max(S.reps[k]||0, v|0);
+  for(const [k,v] of Object.entries(st.seen||{})) S.seen[k]=Math.max(S.seen[k]||0, v|0);
+  for(const [k,v] of Object.entries(st.done||{})) S.done[k]=Object.assign(S.done[k]||{}, v);
+  const haveJ=new Set(J.map(e=>e.id)); J=[...J, ...(Array.isArray(b.journal)?b.journal:[]).filter(e=>e&&e.id&&!haveJ.has(e.id))];
+  normalise(); persist(); render(); toast("Backup restored and merged");
+}
+
+/* ===================== RENDER + EVENTS ===================== */
+function render(){
+  try{ renderInner(); }catch(err){ console.error(err); document.getElementById("view").innerHTML=`<div class="empty"><strong>That view didn't load</strong>Your progress is safe.<div class="row" style="justify-content:center;margin-top:10px"><button class="btn primary" data-tab="today">Go to Today</button></div></div>`; }
+}
+function renderInner(){
+  document.getElementById("hdrDate").textContent=new Date().toLocaleDateString("en-AU",{weekday:"long",day:"numeric",month:"long"});
+  const due=dueItems().length;
+  const tabs=[["today","Today",I.today],["library","Library",I.library],["lexicon","Lexicon",I.lexicon],["lectern","Lectern",I.lectern],["review","Review",I.review]];
+  document.getElementById("tabs").innerHTML=tabs.map(([k,l,ic])=>`<button class="${k===tab?"on":""}" data-tab="${k}" ${k===tab?'aria-current="page"':""}>${ic}${l}${k==="review"&&due?`<span class="badge">${due}</span>`:""}</button>`).join("");
+  const v=document.getElementById("view");
+  v.innerHTML = tab==="today"?vToday():tab==="library"?vLibrary():tab==="lexicon"?vLexicon():tab==="lectern"?vLectern():vReview();
+  v.querySelectorAll("[data-takes]").forEach(async el=>{ el.innerHTML=await takesHtml(el.dataset.takes); });
+  const q=document.getElementById("libQ"); if(q&&libQuery&&document.activeElement!==q){}
+}
+function openAny(id){ const it=ALL[id]; if(!it) return; markSeen(id); persist(); if(it.kind==="word") { tab="lexicon"; view=id; } else if(it.kind==="passage"){ tab="lectern"; view=id; } else { tab="library"; libSec=it.kind==="scenario"?"scenarios":it.kind==="spoken"?"spoken":it.kind==="pair"?"pairs":it.kind==="diction"?"diction":"deck"; view=id; } render(); scrollTo(0,0); }
+function randomFrom(sec){ const pool=sec==="scenarios"?SCEN.filter(s=>libRoom==="All"||s.room===libRoom):sec==="spoken"?SPOKEN.filter(s=>(libRoom==="All"||s.room===libRoom)&&s.family!=="From the Room"):sec==="pairs"?PAIRS:sec==="diction"?DICT:sec==="lexicon"?WORDS.filter(w=>lexReg==="All"||w.register===lexReg):[]; if(!pool.length) return; randomSeq[sec]=true; const it=pool[Math.floor(Math.random()*pool.length)]; markSeen(it.id); persist(); view=it.id; if(sec==="lexicon") tab="lexicon"; else { tab="library"; libSec=sec; } render(); scrollTo(0,0); }
+
+document.addEventListener("click", e=>{
+  const b=e.target.closest("[data-tab],[data-open],[data-openlib],[data-openany],[data-back],[data-sec],[data-room],[data-reg],[data-fam],[data-rsec],[data-move],[data-rep],[data-keep],[data-reflect],[data-done],[data-say],[data-hold],[data-random],[data-next],[data-deck],[data-flip],[data-pat],[data-breath],[data-timer],[data-rec],[data-deltake],[data-reveal],[data-grade],[data-export],[data-exportmd],[data-restore],[data-jsave],[data-jcancel],[data-jedit],[data-jdel]");
+  if(!b) return; const d=b.dataset;
+  if(d.tab!==undefined){ if(canSpeak) speechSynthesis.cancel(); tab=d.tab; view=null; revShow=false; if(d.sec) libSec=d.sec; if(d.tab==="review") revSec="due"; render(); scrollTo(0,0); return; }
+  if(d.open!==undefined){ if(d.open.startsWith("today:")){ view=d.open; markSeen(todaySet()[d.open.slice(6)].id); persist(); } else { view=d.open; markSeen(d.open); persist(); } render(); scrollTo(0,0); return; }
+  if(d.openlib!==undefined){ tab="library"; libSec="spoken"; view=d.openlib; render(); scrollTo(0,0); return; }
+  if(d.openany!==undefined){ openAny(d.openany); return; }
+  if(d.back!==undefined){ if(canSpeak) speechSynthesis.cancel(); view=null; render(); scrollTo(0,0); return; }
+  if(d.sec!==undefined){ libSec=d.sec; view=null; libRoom="All"; render(); return; }
+  if(d.room!==undefined){ libRoom=d.room; render(); return; }
+  if(d.reg!==undefined){ lexReg=d.reg; render(); return; }
+  if(d.fam!==undefined){ lecFam=d.fam; render(); return; }
+  if(d.rsec!==undefined){ revSec=d.rsec; revShow=false; render(); return; }
+  if(d.move!==undefined){ const [id,i]=d.move.split(":"); moveOpen[id]=moveOpen[id]||{}; moveOpen[id][i]=!moveOpen[id][i]; render(); return; }
+  if(d.rep!==undefined){ const id=b.closest("[data-reps]").dataset.reps; const n=+d.rep; const cur=S.reps[id]||0; S.reps[id]= n<=cur ? n-1 : n; persist(); render(); return; }
+  if(d.keep!==undefined){ keep(d.keep); render(); return; }
+  if(d.reflect!==undefined){ composing={link:d.reflect||null,text:""}; tab="review"; revSec="journal"; view=null; render(); setTimeout(()=>{ const t=document.getElementById("jtext"); if(t) t.focus(); },50); return; }
+  if(d.done!==undefined){ setDone(d.done,true); view=null; render(); scrollTo(0,0); toast("Done"); return; }
+  if(d.say!==undefined){ speak(d.say); return; }
+  if(d.hold!==undefined){ startHold(d.hold); return; }
+  if(d.random!==undefined){ randomFrom(d.random); return; }
+  if(d.next!==undefined){ randomFrom(d.next); return; }
+  if(d.deck!==undefined){ if(d.deck==="shuffle"){ deckOrder=shuffle(DECK.map(c=>c.id)); deckIdx=0; } else if(d.deck==="next") deckIdx++; else deckIdx=Math.max(0,deckIdx-1); deckFlip=false; render(); return; }
+  if(d.flip!==undefined){ deckFlip=!deckFlip; render(); return; }
+  if(d.pat!==undefined){ breath.pat=+d.pat; render(); return; }
+  if(d.breath!==undefined){ if(breath.on){ clearInterval(breath.timer); breath.on=false; } else { const p=FLOOR.breath[breath.pat].pattern; breath.on=true; breath.phase=0; breath.left=p[0]; breath.timer=setInterval(breathTick,1000); } render(); if(breath.on){ const orb=document.getElementById("orb"); orb.style.transitionDuration=FLOOR.breath[breath.pat].pattern[0]+"s"; orb.style.transform="scale(1.25)"; } return; }
+  if(d.timer!==undefined){ const [id,sec]=d.timer.split(":"); const out=document.getElementById("ptime-"+id); if(b._t){ clearInterval(b._t); b._t=null; const s=Math.round((Date.now()-b._t0)/1000); out.textContent=`${fmtDur(s)} · target about ${sec}s${s>sec*1.15?" · too slow is fine; too fast is the usual fault":s<sec*.85?" · that was quick. Slow the full stops.":" · on pace"}`; b.textContent="Time a read"; } else { b._t0=Date.now(); b.textContent="Stop"; b._t=setInterval(()=>{ out.textContent=fmtDur(Math.round((Date.now()-b._t0)/1000)); },500); } return; }
+  if(d.rec!==undefined){ toggleRecord(d.rec); return; }
+  if(d.deltake!==undefined){ deleteTake(d.deltake).then(render); return; }
+  if(d.reveal!==undefined){ revShow=true; render(); return; }
+  if(d.grade!==undefined){ const k=dueItems()[0]; if(k){ k.interval=d.grade==="good"?Math.min((k.interval||1)*2,90):1; k.due=dayNum()+k.interval; persist(); } revShow=false; render(); scrollTo(0,0); return; }
+  if(d.export!==undefined){ exportBackup(); return; }
+  if(d.exportmd!==undefined){ exportMd(); return; }
+  if(d.restore!==undefined){ document.getElementById("restoreFile").click(); return; }
+  if(d.jsave!==undefined){ const t=document.getElementById("jtext").value.trim(); if(!t) return toast("Write something first"); if(composing.id){ const e=J.find(x=>x.id===composing.id); if(e){ e.text=t; e.edited=Date.now(); } } else J.unshift({id:"j"+Date.now(),t:Date.now(),text:t,link:composing.link||null}); composing=null; persist(); render(); toast("Saved"); return; }
+  if(d.jcancel!==undefined){ composing=null; render(); return; }
+  if(d.jedit!==undefined){ const e=J.find(x=>x.id===d.jedit); if(e){ composing={id:e.id,link:e.link,text:e.text}; render(); } return; }
+  if(d.jdel!==undefined){ J=J.filter(x=>x.id!==d.jdel); persist(); render(); toast("Deleted"); return; }
+});
+document.addEventListener("input", e=>{ if(e.target.id==="libQ"){ libQuery=e.target.value; const pos=e.target.selectionStart; render(); const q=document.getElementById("libQ"); if(q){ q.focus(); q.setSelectionRange(pos,pos); } } if(e.target.id==="lexQ"){ lexQuery=e.target.value; const pos=e.target.selectionStart; render(); const q=document.getElementById("lexQ"); if(q){ q.focus(); q.setSelectionRange(pos,pos); } } });
+document.addEventListener("change", e=>{ if(e.target.id==="restoreFile"&&e.target.files&&e.target.files[0]){ e.target.files[0].text().then(restoreBackup); e.target.value=""; } });
+if(canSpeak){ speechSynthesis.onvoiceschanged=()=>{}; }
+if("serviceWorker" in navigator){ addEventListener("load",()=>{ navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+S.lastOpen=Date.now(); persist();
+render();
+</script>
+</body>
+</html>
